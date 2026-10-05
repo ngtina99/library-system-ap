@@ -28,7 +28,7 @@ Small ASP.NET Core Web API for managing books, users and book loans in a library
 
 Requirements:
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)  **8.0.425** (verify with `dotnet --version`)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) - **8.0.425** (verify with `dotnet --version`)
 
 Run the API:
 
