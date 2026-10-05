@@ -21,7 +21,26 @@ public class UsersController : ControllerBase
     {
         var user = await _userService.CreateAsync(request);
 
-        return Created($"/api/users/{user.Id}", user);
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = user.Id },
+            user);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<UserResponse>> GetById(Guid id)
+    {
+        var user = await _userService.GetByIdAsync(id);
+
+        if (user is null)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found",
+                detail: "The specified user does not exist.");
+        }
+
+        return Ok(user);
     }
 
     [HttpGet]

@@ -39,6 +39,21 @@ public class UserService : IUserService
         };
     }
 
+    public async Task<UserResponse?> GetByIdAsync(Guid id)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Where(user => user.Id == id)
+            .Select(user => new UserResponse
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                RegisteredDate = user.RegisteredDate
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<UserResponse>> GetAllAsync()
     {
         return await _context.Users

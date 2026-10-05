@@ -28,7 +28,7 @@ Small ASP.NET Core Web API for managing books, users and book loans in a library
 
 Requirements:
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (verify with `dotnet --version`)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)  **8.0.425** (verify with `dotnet --version`)
 
 Run the API:
 
@@ -92,11 +92,11 @@ Project structure:
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/books` | Create a new book |
 | `GET` | `/api/books` | List all books |
+| `GET` | `/api/books/{id}` | Get a book by ID |
 | `GET` | `/api/books?available=true` | Filter books by availability |
 | `GET` | `/api/books?author=Martin` | Filter books by author |
-| `GET` | `/api/books/{id}` | Get a book by ID |
+| `POST` | `/api/books` | Create a new book |
 | `PUT` | `/api/books/{id}` | Update a book |
 | `DELETE` | `/api/books/{id}` | Delete a book if it is not on loan |
 
@@ -104,17 +104,18 @@ Project structure:
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/users` | Register a new user |
 | `GET` | `/api/users` | List all users |
+| `GET` | `/api/users/{id}` | Get a user by ID |
+| `POST` | `/api/users` | Register a new user |
 
 ### Loans
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/loans` | Borrow a book |
-| `GET` | `/api/loans/{id}` | Get a loan by ID |
-| `POST` | `/api/loans/{id}/return` | Return a borrowed book |
 | `GET` | `/api/loans/active` | List active loans |
+| `GET` | `/api/loans/{id}` | Get a loan by ID |
+| `POST` | `/api/loans` | Borrow a book |
+| `POST` | `/api/loans/{id}/return` | Return a borrowed book |
 
 ## Business Rules
 
@@ -131,6 +132,7 @@ The API implements the following:
 ## Key Decisions
 
 - EF Core InMemory is used to keep the project simple and avoid requiring an external database or OS-specific dependencies.
+- Concurrent borrowing is not protected in this InMemory implementation.
 - DTOs are used to keep API contracts separate from internal models.
 - Data Annotations and custom validation attributes are used to validate request DTOs.
 - Services are used to keep business logic separate from HTTP handling in controllers.
