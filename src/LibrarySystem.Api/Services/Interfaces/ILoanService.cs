@@ -10,4 +10,6 @@ public interface ILoanService
     Task<ReturnLoanResult> ReturnAsync(Guid loanId);
 
     Task<List<LoanResponse>> GetActiveAsync();
+
+    Task<LoanResponse?> GetByIdAsync(Guid id);
 }

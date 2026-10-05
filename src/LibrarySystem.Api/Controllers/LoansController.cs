@@ -43,13 +43,27 @@ public class LoansController : ControllerBase
                     detail: "The book is currently on loan."),
 
             null when result.Loan is not null =>
-                StatusCode(
-                    StatusCodes.Status201Created,
+                CreatedAtAction(
+                    nameof(GetById),
+                    new { id = result.Loan.Id },
                     result.Loan),
 
             _ =>
                 StatusCode(StatusCodes.Status500InternalServerError)
         };
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<LoanResponse>> GetById(Guid id)
+    {
+        var loan = await _loanService.GetByIdAsync(id);
+
+        if (loan is null)
+        {
+            return NotFound("Loan not found.");
+        }
+
+        return Ok(loan);
     }
 
     [HttpGet("active")]

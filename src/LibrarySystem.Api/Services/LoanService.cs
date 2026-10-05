@@ -79,6 +79,22 @@ public class LoanService : ILoanService
         };
     }
 
+    public async Task<LoanResponse?> GetByIdAsync(Guid id)
+    {
+        return await _context.Loans
+            .AsNoTracking()
+            .Where(loan => loan.Id == id)
+            .Select(loan => new LoanResponse
+            {
+                Id = loan.Id,
+                UserId = loan.UserId,
+                BookId = loan.BookId,
+                LoanDate = loan.LoanDate,
+                ReturnDate = loan.ReturnDate
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<LoanResponse>> GetActiveAsync()
     {
         return await _context.Loans
