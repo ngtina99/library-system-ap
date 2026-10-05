@@ -85,39 +85,6 @@ EF Core DbContext
 InMemory Database
 ```
 
-## Architecture
-
-The project uses a simple layered structure:
-
-- `Controllers` handle HTTP requests and responses
-- `Services` contain business logic
-- `DTOs` define API request and response contracts
-- `Models` represent persistence entities
-- `Data` contains the EF Core `DbContext`
-- `Validation` contains custom validation attributes
-- `tests` contains unit tests for service and validation logic
-
-## Features
-
-### Books
-
-- Create book
-- Update book
-- Delete book if not currently on loan
-- List books
-- Filter books by availability and author
-
-### Users
-
-- Register user
-- List users
-
-### Loans
-
-- Borrow a book
-- Return a book
-- List active loans
-
 ## API Endpoints
 
 ### Books
