@@ -76,7 +76,7 @@ EF Core DbContext
 InMemory Database
 ```
 
-## Project Structure
+Project structure:
 ```text
 Project/
 ├── Controllers/       # HTTP requests, responses, status codes
