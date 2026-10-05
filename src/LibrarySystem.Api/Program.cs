@@ -16,7 +16,17 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
 
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Library System API",
+        Version = "v1",
+        Description = "ASP.NET Core Web API for managing books, users and loans."
+    });
+});
 
 var app = builder.Build();
 
@@ -24,13 +34,11 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
 
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint(
-            "/openapi/v1.json",
-            "Library System API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Library System API v1");
     });
 }
 

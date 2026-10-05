@@ -67,7 +67,8 @@ public class BookService : IBookService
         bool? available,
         string? author)
     {
-        var query = _context.Books.AsQueryable();
+        var query = _context.Books
+            .AsNoTracking();
 
         if (available.HasValue)
         {

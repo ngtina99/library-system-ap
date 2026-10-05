@@ -43,8 +43,8 @@ public class LoansController : ControllerBase
                     detail: "The book is currently on loan."),
 
             null when result.Loan is not null =>
-                Created(
-                    $"/api/loans/{result.Loan.Id}",
+                StatusCode(
+                    StatusCodes.Status201Created,
                     result.Loan),
 
             _ =>

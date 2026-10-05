@@ -19,14 +19,8 @@ public class LoanService : ILoanService
     public async Task<CreateLoanResult> CreateAsync(
         CreateLoanRequest request)
     {
-        if (!request.UserId.HasValue || !request.BookId.HasValue)
-        {
-            throw new ArgumentException(
-                "UserId and BookId are required.");
-        }
-
-        var userId = request.UserId.Value;
-        var bookId = request.BookId.Value;
+        var userId = request.UserId!.Value;
+        var bookId = request.BookId!.Value;
 
         var userExists = await _context.Users
             .AnyAsync(user => user.Id == userId);
@@ -88,6 +82,7 @@ public class LoanService : ILoanService
     public async Task<List<LoanResponse>> GetActiveAsync()
     {
         return await _context.Loans
+            .AsNoTracking()
             .Where(loan => loan.ReturnDate == null)
             .Select(loan => new LoanResponse
             {

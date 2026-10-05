@@ -1,16 +1,20 @@
-using System.ComponentModel.DataAnnotations;
+using LibrarySystem.Api.Validation;
 
-namespace LibrarySystem.Api.Validation;
+namespace LibrarySystem.Api.Tests.Validation;
 
-public class NotFutureYearAttribute : ValidationAttribute
+public class NotFutureYearAttributeTests
 {
-    public override bool IsValid(object? value)
+    [Fact]
+    public void IsValid_WhenYearIsInFuture_ShouldReturnFalse()
     {
-        if (value is not int year)
-        {
-            return false;
-        }
+        // Arrange
+        var attribute = new NotFutureYearAttribute();
+        var futureYear = DateTime.UtcNow.Year + 1;
 
-        return year <= DateTime.UtcNow.Year;
+        // Act
+        var result = attribute.IsValid(futureYear);
+
+        // Assert
+        Assert.False(result);
     }
 }

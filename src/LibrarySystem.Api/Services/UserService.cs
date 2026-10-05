@@ -42,6 +42,7 @@ public class UserService : IUserService
     public async Task<List<UserResponse>> GetAllAsync()
     {
         return await _context.Users
+            .AsNoTracking()
             .Select(user => new UserResponse
             {
                 Id = user.Id,
