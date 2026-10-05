@@ -1,6 +1,6 @@
 # Library System API
 
-Small ASP.NET Core Web API for managing books, users and book loans in a library system.
+ASP.NET Core Web API for managing books, users and book loans in a library system.
 
 ## Table of Contents
 
