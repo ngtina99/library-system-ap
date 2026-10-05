@@ -75,16 +75,17 @@ EF Core DbContext
      ↓
 InMemory Database
 ```
-
-Project structure:
-
-- `Controllers` handle HTTP requests, responses, and status codes.
-- `Services` contain application and business logic.
-- `DTOs` define API request and response contracts.
-- `Models` represent persistence entities.
-- `Data` contains the EF Core `DbContext`.
-- `Validation` contains custom validation attributes.
-- `tests` contains automated tests for service and validation logic.
+```text
+Project/
+├── Controllers/       # HTTP requests, responses, status codes
+├── Services/          # Application and business logic
+├── DTOs/              # API request/response contracts
+├── Models/            # Persistence/domain entities
+├── Data/              # EF Core DbContext and configurations
+├── Validation/        # Custom validation attributes
+├── Endpoints/         # API endpoint definitions (if using Minimal APIs)
+└── tests/             # Automated tests
+```
 
 ## API Endpoints
 
