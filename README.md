@@ -6,28 +6,19 @@ Small ASP.NET Core Web API for managing books, users and book loans in a library
 
 - [Tech Stack](#tech-stack)
 - [Running the Application](#running-the-application)
-- [Running Tests](#running-tests)
+  - [Running Tests](#running-tests)
 - [Architecture](#architecture)
-- [Features](#features)
+- [API Endpoints](#api-endpoints)
   - [Books](#books)
   - [Users](#users)
   - [Loans](#loans)
-- [API Endpoints](#api-endpoints)
 - [Business Rules](#business-rules)
-- [Validation and HTTP Responses](#validation-and-http-responses)
-- [Exception Handling](#exception-handling)
 - [Key Decisions](#key-decisions)
-  - [EF Core InMemory](#ef-core-inmemory)
-  - [Service Layer](#service-layer)
-  - [DTOs](#dtos)
-  - [Async/Await](#asyncawait)
-  - [Date and Time](#date-and-time)
-- [Operational Considerations](#operational-considerations)
 
 ## Tech Stack
 
 - .NET 8
-- ASP.NET Core 8 Web API
+- ASP.NET Core Web API
 - Entity Framework Core 8
 - EF Core InMemory
 - OpenAPI / Swagger
@@ -37,7 +28,7 @@ Small ASP.NET Core Web API for managing books, users and book loans in a library
 
 Requirements:
 
-- .NET 8 SDK
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (verify with `dotnet --version`)
 
 Run the API:
 
@@ -51,7 +42,7 @@ Swagger UI is available in development mode at:
 /swagger
 ```
 
-## Running Tests
+### Running Tests
 
 Run all tests from the repository root:
 
@@ -59,7 +50,7 @@ Run all tests from the repository root:
 dotnet test
 ```
 
-The test suite covers the followings:
+The test suite covers the following:
 
 - borrowing an available book
 - preventing borrowing of an unavailable book
@@ -84,6 +75,16 @@ EF Core DbContext
      ↓
 InMemory Database
 ```
+
+Project structure:
+
+- `Controllers` handle HTTP requests, responses, and status codes.
+- `Services` contain application and business logic.
+- `DTOs` define API request and response contracts.
+- `Models` represent persistence entities.
+- `Data` contains the EF Core `DbContext`.
+- `Validation` contains custom validation attributes.
+- `tests` contains automated tests for service and validation logic.
 
 ## API Endpoints
 
@@ -111,12 +112,13 @@ InMemory Database
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/loans` | Borrow a book |
+| `GET` | `/api/loans/{id}` | Get a loan by ID |
 | `POST` | `/api/loans/{id}/return` | Return a borrowed book |
 | `GET` | `/api/loans/active` | List active loans |
 
 ## Business Rules
 
-The API implements the following core rules:
+The API implements the following:
 
 - A book can only be borrowed if it is available.
 - Borrowing a book marks it as unavailable.
@@ -126,83 +128,16 @@ The API implements the following core rules:
 - A loan can only be created for an existing user and book.
 - A book's publication year cannot be in the future.
 
-Business-rule conflicts are returned using appropriate HTTP status codes such as `409 Conflict`.
-
-## Validation and HTTP Responses
-
-Request DTOs use Data Annotations for input validation. With ASP.NET Core's `[ApiController]`, invalid requests automatically result in `400 Bad Request`.
-
-The API uses appropriate HTTP status codes, including:
-
-- `200 OK` for successful reads and updates
-- `201 Created` when a resource is created
-- `204 No Content` after successful deletion
-- `400 Bad Request` for invalid input
-- `404 Not Found` when a requested resource does not exist
-- `409 Conflict` for business-rule conflicts
-- `500 Internal Server Error` for unexpected failures
-
-## Exception Handling
-
-Unexpected exceptions are handled globally using ASP.NET Core's built-in exception-handling middleware together with `ProblemDetails`.
-
-Expected business errors are handled explicitly by the application and mapped to appropriate HTTP responses rather than being treated as exceptions.
-
 ## Key Decisions
 
-- EF Core InMemory is used because persistence is not required for the homework assignment.
-- DTOs are used to avoid exposing internal entity models directly.
-- Service classes keep business rules outside controllers.
-- Conflict responses are returned for business-rule violations such as borrowing an unavailable book.
-- `DateTimeOffset.UtcNow` is used for loan timestamps to avoid local time ambiguity.
-
-Responsibilities are separated as follows:
-
-- `Controllers` handle HTTP requests, responses, and status codes.
-- `Services` contain application and business logic.
-- `DTOs` define API request and response contracts.
-- `Models` represent application entities.
-- `Data` contains the EF Core `DbContext`.
-- `Validation` contains custom validation attributes.
-- `tests` contains automated tests for business and validation logic.
-
-## Key Decisions
-
-### EF Core InMemory
-
-The assignment allows an in-memory database, so EF Core InMemory is used to keep the infrastructure simple and keep the focus on API design and business logic.
-
-For a production application, a relational database such as SQL Server would normally be used together with EF Core migrations.
-
-### Service Layer
-
-Business logic is kept in service classes rather than controllers. This keeps controllers focused on HTTP concerns and makes the business rules easier to understand and test.
-
-A separate repository layer was intentionally not added because EF Core's `DbContext` already provides a data-access abstraction and an additional repository layer would add unnecessary complexity for this small application.
-
-### DTOs
-
-Request and response DTOs are used instead of exposing EF Core entities directly. This keeps the external API contract separate from the internal data model.
-
-### Async/Await
-
-Database operations use asynchronous EF Core APIs such as `ToListAsync`, `FirstOrDefaultAsync`, and `SaveChangesAsync`.
-
-Read-only queries use `AsNoTracking()` where appropriate.
-
-### Date and Time
-
-`DateTimeOffset.UtcNow` is used for registration and loan timestamps to avoid dependence on the server's local time zone.
-
-## Operational Considerations
-
-Although this is a small homework project, the following production-readiness aspects were considered:
-
-- The API returns meaningful HTTP status codes.
-- Business conflicts are represented with `409 Conflict`.
-- Unexpected exceptions are handled using ASP.NET Core's built-in exception-handling middleware together with `ProblemDetails`, resulting in consistent `500 Internal Server Error` responses.
-- Expected business errors are handled explicitly and mapped to appropriate HTTP status codes such as `404 Not Found` and `409 Conflict`.
-- DTOs protect the API contract from internal entity changes.
-- Service classes isolate business logic from HTTP concerns.
-- Unit tests cover important loan and validation scenarios.
-- The project can be extended with persistent storage, authentication, structured logging, and monitoring.
+- EF Core InMemory is used to keep the project simple and avoid requiring an external database or OS-specific dependencies.
+- DTOs are used to keep API contracts separate from internal models.
+- Data Annotations and custom validation attributes are used to validate request DTOs.
+- Services are used to keep business logic separate from HTTP handling in controllers.
+- `409 Conflict` is returned for business-rule violations, such as borrowing an unavailable book.
+- Expected errors are handled explicitly and mapped to appropriate HTTP status codes.
+- Unexpected exceptions are handled globally using ASP.NET Core's built-in exception-handling middleware with `ProblemDetails`, returning `500 Internal Server Error`.
+- `DateTimeOffset.UtcNow` is used for timestamps to avoid local time ambiguity.
+- Asynchronous EF Core APIs are used for database operations.
+- `AsNoTracking()` is applied to read-only queries to avoid unnecessary change tracking.
+- A repository layer is omitted because EF Core's `DbContext` already provides data access abstraction, avoiding unnecessary complexity.

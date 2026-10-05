@@ -60,7 +60,10 @@ public class LoansController : ControllerBase
 
         if (loan is null)
         {
-            return NotFound("Loan not found.");
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Loan not found",
+                detail: "The specified loan does not exist.");
         }
 
         return Ok(loan);
